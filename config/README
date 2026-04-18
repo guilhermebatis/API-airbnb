@@ -1,94 +1,61 @@
 # 🏠 Airbnb Price Prediction API
 
-API desenvolvida com **Django REST Framework** para previsão de preços de imóveis do Airbnb com base em características do anúncio.
+API desenvolvida com Django REST Framework para previsão de preços de imóveis com base em características do anúncio (Airbnb), utilizando Machine Learning.
 
 ---
 
-## 🚀 Tecnologias utilizadas
+## 🚀 Tecnologias
 
 - Python
 - Django
 - Django REST Framework
-- Pandas
 - Scikit-learn
 - XGBoost
-- Joblib
+- Pandas / NumPy
 
 ---
 
-## 🧠 Sobre o projeto
-
-Esta API recebe dados de um imóvel e retorna uma previsão de preço baseada em um modelo de Machine Learning previamente treinado.
-
-O modelo foi treinado com dados tratados utilizando **one-hot encoding (get_dummies)**, e a API replica esse mesmo processo para garantir consistência nas previsões.
-
----
-
-## ⚙️ Como executar o projeto
-
-### 1️⃣ Clonar o repositório
+## 📦 Instalação
 
 ```bash
-git clone https://github.com/guilhermebatis/airbnb-api.git
-cd airbnb-api
-```
+git clone https://github.com/guilhermebatis/API-airbnb.git
+cd API-airbnb
 
----
-
-### 2️⃣ Criar ambiente virtual
-
-```bash
 python -m venv venv
-```
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
 
-Ativar:
-
-**Windows**
-
-```bash
-venv\Scripts\activate
-```
-
----
-
-### 3️⃣ Instalar dependências
-
-```bash
 pip install -r requirements.txt
 ```
 
 ---
 
-### 4️⃣ Rodar migrations
-
-```bash
-python manage.py migrate
-```
-
----
-
-### 5️⃣ Iniciar servidor
+## ▶️ Rodando o projeto
 
 ```bash
 python manage.py runserver
 ```
 
----
-
-## 📡 Endpoint principal
-
-### 🔹 Previsão de preço
+A API estará disponível em:
 
 ```
-POST /api/predict/
+http://127.0.0.1:8000/
 ```
 
 ---
 
-## 📥 Exemplo de requisição
+## 🤖 Endpoint de Previsão
 
-```json
-{
+### 📌 POST `api/predict/`
+
+Realiza a previsão de preço com base nos dados do imóvel.
+
+### Exemplo de requisição:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/predict/ \
+-H "Content-Type: application/json" \
+-d '{
   "host_is_superhost": true,
   "host_total_listings_count": 5,
   "latitude": -23.5,
@@ -104,62 +71,55 @@ POST /api/predict/
   "num_amenities": 15,
   "property_type": "apartment",
   "cancellation_policy": "flexible"
-}
+}'
 ```
 
----
-
-## 📤 Exemplo de resposta
+### 📌 Resposta esperada:
 
 ```json
 {
-  "preco_previsto": 350.75
+  "predicted_price": 209.58
 }
 ```
 
 ---
 
-## 🧩 Estrutura do projeto
+## 🧠 Machine Learning
+
+O modelo foi treinado previamente e salvo utilizando `joblib`, sendo carregado pela API para realizar previsões em tempo real.
+
+---
+
+## 📁 Estrutura do Projeto
 
 ```
-config/
-core/
-modelo/
-    pipeline.joblib
-    colunas.pkl
-    preprocess.py
-    model_loader.py
+API-airbnb/
+│
+├── api/
+│   ├── views.py
+│   ├── serializers.py
+│   ├── models/
+│
+├── model/
+│   └── XGBRegressor.joblib
+│
+├── manage.py
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
-## ⚠️ Observações importantes
+## 📌 Objetivo
 
-- O modelo espera dados no mesmo formato utilizado no treinamento
-- A API aplica automaticamente:
-  - `get_dummies`
-  - alinhamento de colunas com `reindex`
+Este projeto tem como objetivo demonstrar:
 
-- Novas categorias não vistas no treino são ignoradas
-
----
-
-## 📌 Possíveis melhorias
-
-- Versionamento de modelos
-- Deploy em nuvem (Render, Railway, AWS)
-- Autenticação de usuários
-- Monitoramento de previsões
-- Re-treinamento automático do modelo
+- Integração entre Machine Learning e APIs
+- Desenvolvimento backend com Django
+- Estruturação de projetos para produção
 
 ---
 
 ## 👨‍💻 Autor
 
 Guilherme Carvalho
-
----
-
-## 📄 Licença
-
-Este projeto é para fins educacionais e de portfólio.
