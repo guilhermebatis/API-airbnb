@@ -1,0 +1,165 @@
+# 🏠 Airbnb Price Prediction API
+
+API desenvolvida com **Django REST Framework** para previsão de preços de imóveis do Airbnb com base em características do anúncio.
+
+---
+
+## 🚀 Tecnologias utilizadas
+
+- Python
+- Django
+- Django REST Framework
+- Pandas
+- Scikit-learn
+- XGBoost
+- Joblib
+
+---
+
+## 🧠 Sobre o projeto
+
+Esta API recebe dados de um imóvel e retorna uma previsão de preço baseada em um modelo de Machine Learning previamente treinado.
+
+O modelo foi treinado com dados tratados utilizando **one-hot encoding (get_dummies)**, e a API replica esse mesmo processo para garantir consistência nas previsões.
+
+---
+
+## ⚙️ Como executar o projeto
+
+### 1️⃣ Clonar o repositório
+
+```bash
+git clone https://github.com/guilhermebatis/airbnb-api.git
+cd airbnb-api
+```
+
+---
+
+### 2️⃣ Criar ambiente virtual
+
+```bash
+python -m venv venv
+```
+
+Ativar:
+
+**Windows**
+
+```bash
+venv\Scripts\activate
+```
+
+---
+
+### 3️⃣ Instalar dependências
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+### 4️⃣ Rodar migrations
+
+```bash
+python manage.py migrate
+```
+
+---
+
+### 5️⃣ Iniciar servidor
+
+```bash
+python manage.py runserver
+```
+
+---
+
+## 📡 Endpoint principal
+
+### 🔹 Previsão de preço
+
+```
+POST /api/predict/
+```
+
+---
+
+## 📥 Exemplo de requisição
+
+```json
+{
+  "host_is_superhost": true,
+  "host_total_listings_count": 5,
+  "latitude": -23.5,
+  "longitude": -46.6,
+  "accommodates": 3,
+  "bathrooms": 1,
+  "bedrooms": 2,
+  "beds": 2,
+  "extra_people": 50,
+  "minimum_nights": 2,
+  "number_of_reviews": 10,
+  "instant_bookable": true,
+  "num_amenities": 15,
+  "property_type": "apartment",
+  "cancellation_policy": "flexible"
+}
+```
+
+---
+
+## 📤 Exemplo de resposta
+
+```json
+{
+  "preco_previsto": 350.75
+}
+```
+
+---
+
+## 🧩 Estrutura do projeto
+
+```
+config/
+core/
+modelo/
+    pipeline.joblib
+    colunas.pkl
+    preprocess.py
+    model_loader.py
+```
+
+---
+
+## ⚠️ Observações importantes
+
+- O modelo espera dados no mesmo formato utilizado no treinamento
+- A API aplica automaticamente:
+  - `get_dummies`
+  - alinhamento de colunas com `reindex`
+
+- Novas categorias não vistas no treino são ignoradas
+
+---
+
+## 📌 Possíveis melhorias
+
+- Versionamento de modelos
+- Deploy em nuvem (Render, Railway, AWS)
+- Autenticação de usuários
+- Monitoramento de previsões
+- Re-treinamento automático do modelo
+
+---
+
+## 👨‍💻 Autor
+
+Guilherme Carvalho
+
+---
+
+## 📄 Licença
+
+Este projeto é para fins educacionais e de portfólio.

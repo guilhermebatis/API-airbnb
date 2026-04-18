@@ -1,0 +1,42 @@
+# Arquivos compilados do Python
+__pycache__/
+*.py[cod]
+*$py.class
+pycache/
+*.pyc
+
+# Ambiente Virtual
+venv/
+env/
+.env/
+ENV/
+target/
+.DS_Store
+
+# Banco de Dados Local (SQLite)
+*.sqlite3
+dataset/
+db.sqlite3
+
+# Arquivos de Mídia e Estáticos Coletados
+media/
+staticfiles/
+
+# Variáveis de Ambiente (Segredos e Chaves de API)
+.env
+
+# Logs do Sistema
+*.log
+
+# Pastas de IDEs (Opcional, mas recomendado)
+.vscode/
+.idea/
+*.swp
+
+# Pastas de Distribuição/Pacote
+dist/
+build/
+*.egg-info/
+
+#Logs
+*.log
