@@ -65,6 +65,12 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Airbnb Price Prediction API',
     'DESCRIPTION': 'API para previsão de preços com Machine Learning',
     'VERSION': '1.0.0',
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SECURITY": [
+        {"BearerAuth": []}
+    ]
+
 }
 
 MIDDLEWARE = [

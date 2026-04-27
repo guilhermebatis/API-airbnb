@@ -6,16 +6,39 @@ from .models import Prediction
 from core.services.prediction_service import gerar_previsao
 from .serializers import PredictionSerializer, PredictionModelSerializer
 from modelo.predictor import prever_preco
-from drf_spectacular.utils import extend_schema, OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiTypes, OpenApiExample, OpenApiParameter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveAPIView
 from core.permissions import IsOwnerOrAdmin
 
 
 @extend_schema(
+    summary="Gerar previsão de preço de imóvel",
     request=PredictionSerializer,
     responses={200: OpenApiTypes.OBJECT},
     description="Realiza a previsão de preço de um imóvel com base nos dados fornecidos",
+    examples=[
+        OpenApiExample(
+            "Exemplo de entrada",
+            value={
+                "host_is_superhost": True,
+                "host_total_listings_count": 5,
+                "latitude": -23.5,
+                "longitude": -46.6,
+                "accommodates": 3,
+                "bathrooms": 1,
+                "bedrooms": 2,
+                "beds": 2,
+                "extra_people": 50,
+                "minimum_nights": 2,
+                "number_of_reviews": 10,
+                "instant_bookable": True,
+                "num_amenities": 15,
+                "property_type": "apartment",
+                "cancellation_policy": "flexible"
+            }
+        )],
+    tags=["Predictions"]
 )
 class PredictionPriceView(APIView):
 
@@ -32,7 +55,27 @@ class PredictionPriceView(APIView):
 
 
 @extend_schema(
-    responses=PredictionModelSerializer(many=True)
+    summary="Listar previsões do usuário",
+    description="Retorna todas as previsões do usuário autenticado. Admins veem todas as previsões do sistema.",
+    responses=PredictionModelSerializer(many=True),
+    tags=["Predictions"],
+    parameters=[
+        OpenApiParameter(
+            name="min_price",
+            type=float,
+            description="Filtrar por preço mínimo previsto"
+        ),
+        OpenApiParameter(
+            name="max_price",
+            type=float,
+            description="Filtrar por preço máximo previsto"
+        ),
+        OpenApiParameter(
+            name="property_type",
+            type=str,
+            description="Filtrar por tipo de imóvel (ex: casa, apartamento)"
+        ),
+    ]
 )
 class PredictionListView(APIView):
 
@@ -65,8 +108,15 @@ class PredictionListView(APIView):
         return Response(serializer.data)
 
 
+@extend_schema(
+    summary="Detalhes de uma previsão",
+    description=""""
+    Retorna uma previsão específica pertencente ao usuário ou admin.
+    """,
+    tags=["Predictions"],
+    responses=PredictionModelSerializer,
+)
 class PredictionDetailView(RetrieveAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
     queryset = Prediction.objects.all()
     serializer_class = PredictionModelSerializer
-    permission_classes = [IsOwnerOrAdmin]
