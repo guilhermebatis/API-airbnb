@@ -2,9 +2,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from .serializers import PredictionSerializer
-from modelo.model_loader import pipeline, colunas_treino
-from modelo.preprocess import transformar_entrada
+from .models import Prediction
+from core.services.prediction_service import gerar_previsao
+from .serializers import PredictionSerializer, PredictionModelSerializer
+from modelo.predictor import prever_preco
+from drf_spectacular.utils import extend_schema, OpenApiTypes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import RetrieveAPIView
+from core.permissions import IsOwnerOrAdmin
 
 
 @extend_schema(
@@ -14,7 +19,7 @@ from modelo.preprocess import transformar_entrada
 )
 class PredictionPriceView(APIView):
 
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = PredictionSerializer(data=request.data)
@@ -54,14 +59,14 @@ class PredictionListView(APIView):
         if property_type:
             predictions = predictions.filter(property_type=property_type)
 
-        if selializer.is_valid():
-            dados = selializer.validated_data
+        predictions = predictions.order_by('-criado_em')
 
-            df = transformar_entrada(dados, colunas_treino)
+        serializer = PredictionModelSerializer(predictions, many=True)
+        return Response(serializer.data)
 
-            previsao = pipeline.predict(df)
-            return Response({
-                "preco_previsto": float(previsao[0])
-            })
 
-        return Response(selializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class PredictionDetailView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Prediction.objects.all()
+    serializer_class = PredictionModelSerializer
+    permission_classes = [IsOwnerOrAdmin]

@@ -1,8 +1,9 @@
 from rest_framework import serializers
+from .models import Prediction
 
 
 class PredictionSerializer(serializers.Serializer):
-
+    user = serializers.StringRelatedField()
     host_is_superhost = serializers.BooleanField()
     host_total_listings_count = serializers.IntegerField()
     latitude = serializers.FloatField()
@@ -21,3 +22,9 @@ class PredictionSerializer(serializers.Serializer):
         choices=['apartment', 'condominium', 'house', 'outro'])
     cancellation_policy = serializers.ChoiceField(
         choices=['moderate', 'flexible', 'strict', 'strict_14_with_grace_period'])
+
+
+class PredictionModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prediction
+        fields = '__all__'
