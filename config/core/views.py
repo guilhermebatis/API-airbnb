@@ -3,13 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from .models import Prediction
-from core.services.prediction_service import gerar_previsao
+from core.services.prediction_service import gerar_previsao, media_de_preco_por_propreidade
 from .serializers import PredictionSerializer, PredictionModelSerializer
 from modelo.predictor import prever_preco
 from drf_spectacular.utils import extend_schema, OpenApiTypes, OpenApiExample, OpenApiParameter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveAPIView
 from core.permissions import IsOwnerOrAdmin
+import json
 
 
 @extend_schema(
@@ -110,7 +111,7 @@ class PredictionListView(APIView):
 
 @extend_schema(
     summary="Detalhes de uma previsão",
-    description=""""
+    description="""
     Retorna uma previsão específica pertencente ao usuário ou admin.
     """,
     tags=["Predictions"],
@@ -120,3 +121,21 @@ class PredictionDetailView(RetrieveAPIView):
     permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
     queryset = Prediction.objects.all()
     serializer_class = PredictionModelSerializer
+
+
+@extend_schema(
+    description="Retorna a média de preço por tipo de propriedade"
+)
+class PredictionStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        dados = media_de_preco_por_propreidade()
+        lista = []
+        for item in dados:
+            lista.append({
+                "property_type": item[0],
+                "media_preco": item[1]
+            })
+
+        return Response(lista)

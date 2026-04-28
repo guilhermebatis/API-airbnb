@@ -5,5 +5,7 @@ urlpatterns = [
     path("predict/", PredictionPriceView.as_view(), name="predict"),
     path('predictions/', PredictionListView.as_view()),
     path('predictions/<int:pk>/', PredictionDetailView.as_view(),
-         name='prediction-detail')
+         name='prediction-detail'),
+    path('predictions/status', PredictionStatusView.as_view(),
+         name='prediction-status')
 ]

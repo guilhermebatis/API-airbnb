@@ -1,6 +1,7 @@
 
 from modelo.predictor import prever_preco
 from core.models import Prediction
+from django.db import connection
 
 
 def gerar_previsao(user, dados):
@@ -33,3 +34,14 @@ def gerar_previsao(user, dados):
         "preco_previsto": preco,
         "id": prediction.id
     }
+
+
+def media_de_preco_por_propreidade():
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT property_type, AVG(preco_previsto) 
+            FROM core_prediction 
+            GROUP BY property_type
+            """)
+        resultado = cursor.fetchall()
+    return (resultado)
