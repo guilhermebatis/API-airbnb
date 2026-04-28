@@ -36,12 +36,23 @@ def gerar_previsao(user, dados):
     }
 
 
-def media_de_preco_por_propreidade():
+def media_de_preco_por_propriedade(user_id, property_type=None):
     with connection.cursor() as cursor:
-        cursor.execute("""
-            SELECT property_type, AVG(preco_previsto) 
-            FROM core_prediction 
-            GROUP BY property_type
-            """)
+
+        query = """
+            SELECT property_type, AVG(preco_previsto)
+            FROM core_prediction
+            WHERE user_id = %s
+            """
+        params = [user_id]
+
+        if property_type:
+            query += " AND property_type = %s"
+            params.append(property_type)
+
+        query += " GROUP BY property_type"
+
+        cursor.execute(query, params)
+
         resultado = cursor.fetchall()
     return (resultado)

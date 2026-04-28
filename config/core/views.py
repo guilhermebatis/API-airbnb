@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from .models import Prediction
-from core.services.prediction_service import gerar_previsao, media_de_preco_por_propreidade
+from core.services.prediction_service import gerar_previsao, media_de_preco_por_propriedade
 from .serializers import PredictionSerializer, PredictionModelSerializer
 from modelo.predictor import prever_preco
 from drf_spectacular.utils import extend_schema, OpenApiTypes, OpenApiExample, OpenApiParameter
@@ -130,12 +130,15 @@ class PredictionStatusView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        dados = media_de_preco_por_propreidade()
+        property_type = request.query_params.get('property_type')
+        user_id = request.user.id
+        dados = media_de_preco_por_propriedade(user_id, property_type)
         lista = []
-        for item in dados:
+
+        for tipo, media_preco in dados:
             lista.append({
-                "property_type": item[0],
-                "media_preco": item[1]
+                "property_type": tipo,
+                "media_preco": media_preco
             })
 
         return Response(lista)

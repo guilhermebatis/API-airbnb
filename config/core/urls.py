@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PredictionPriceView, PredictionListView, PredictionDetailView
+from .views import PredictionPriceView, PredictionListView, PredictionDetailView, PredictionStatusView
 
 urlpatterns = [
     path("predict/", PredictionPriceView.as_view(), name="predict"),
