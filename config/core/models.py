@@ -21,9 +21,9 @@ class Prediction(models.Model):
     cancellation_policy = models.CharField(
         max_length=100,)
 
-    preco_previsto = models.FloatField()
+    predicted_price = models.FloatField()
 
     criado_em = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Predição - {self.preco_previsto}"
+        return f"Predição - {self.predicted_price}"

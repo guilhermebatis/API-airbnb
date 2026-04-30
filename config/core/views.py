@@ -3,14 +3,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from .models import Prediction
-from core.services.prediction_service import gerar_previsao, media_de_preco_por_propriedade
+from core.services.prediction_service import generate_prediction, average_price_per_property
 from .serializers import PredictionSerializer, PredictionModelSerializer
-from modelo.predictor import prever_preco
+from modelo.predictor import predict_price
 from drf_spectacular.utils import extend_schema, OpenApiTypes, OpenApiExample, OpenApiParameter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveAPIView
 from core.permissions import IsOwnerOrAdmin
-import json
 
 
 @extend_schema(
@@ -49,7 +48,8 @@ class PredictionPriceView(APIView):
         serializer = PredictionSerializer(data=request.data)
 
         if serializer.is_valid():
-            resultado = gerar_previsao(serializer.validated_data, request.user)
+            resultado = generate_prediction(
+                serializer.validated_data, request.user)
             return Response(resultado)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -132,13 +132,13 @@ class PredictionStatusView(APIView):
     def get(self, request):
         property_type = request.query_params.get('property_type')
         user_id = request.user.id
-        dados = media_de_preco_por_propriedade(user_id, property_type)
-        lista = []
+        dados = average_price_per_property(user_id, property_type)
+        list = []
 
-        for tipo, media_preco in dados:
-            lista.append({
+        for tipo, avg_price in dados:
+            list.append({
                 "property_type": tipo,
-                "media_preco": media_preco
+                "avg_price": avg_price
             })
 
-        return Response(lista)
+        return Response(list)
