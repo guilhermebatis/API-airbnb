@@ -4,7 +4,7 @@ from core.models import Prediction
 from django.db import connection
 
 
-def generate_prediction(user, input_data):
+def generate_prediction(input_data, user):
     # 1. gerar previsão
     price = predict_price(input_data)
 
@@ -26,12 +26,12 @@ def generate_prediction(user, input_data):
         num_amenities=input_data.get('num_amenities'),
         property_type=input_data.get('property_type'),
         cancellation_policy=input_data.get('cancellation_policy'),
-        preco_previsto=price
+        predicted_price=price
     )
 
     # 3. retorno padronizado
     return {
-        "predict_price": price,
+        "predicted_price": price,
         "id": prediction.id
     }
 
