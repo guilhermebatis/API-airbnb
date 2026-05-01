@@ -9,7 +9,7 @@ class PredictionTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username='guilherme', password='123')
+            username='testuser', password='testpass123')
 
         refresh = RefreshToken.for_user(self.user)
         self.token = str(refresh.access_token)
