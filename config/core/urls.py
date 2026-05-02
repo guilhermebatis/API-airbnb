@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PredictionPriceView, PredictionListView, PredictionDetailView, PredictionStatusView
+from .views import PredictionPriceView, PredictionListView, PredictionDetailView, PredictionStatusView, RegisterView
 
 urlpatterns = [
     path("predict/", PredictionPriceView.as_view(), name="predict"),
@@ -7,5 +7,6 @@ urlpatterns = [
     path('predictions/<int:pk>/', PredictionDetailView.as_view(),
          name='prediction-detail'),
     path('predictions/status', PredictionStatusView.as_view(),
-         name='prediction-status')
+         name='prediction-status'),
+    path('api/register/', RegisterView.as_view())
 ]

@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveAPIView
 from core.permissions import IsOwnerOrAdmin
 import logging
+from django.contrib.auth.models import User
 logger = logging.getLogger(__name__)
 
 
@@ -149,3 +150,21 @@ class PredictionStatusView(APIView):
             })
 
         return Response(list)
+
+
+class RegisterView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+        if not username or not password:
+            return Response({"error": "Missing data"}, status=400)
+
+        user = User.objects.create_user(
+            username=username,
+            password=password
+        )
+
+        return Response({"message": "User created"}, status=201)
