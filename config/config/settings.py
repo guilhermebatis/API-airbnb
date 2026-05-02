@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['https://api-airbnb-rvap.onrender.com']
+ALLOWED_HOSTS = ['api-airbnb-rvap.onrender.com']
 
 
 # Application definition
