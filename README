@@ -40,13 +40,14 @@ Além disso, o sistema implementa:
 
 ```bash
 git clone https://github.com/guilhermebatis/API-airbnb
-cd airbnb-api
+cd API-airbnb
 
 python -m venv venv
 venv\Scripts\activate  # Windows
 
 pip install -r requirements.txt
 
+cd config
 python manage.py migrate
 python manage.py runserver
 ```
