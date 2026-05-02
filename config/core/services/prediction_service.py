@@ -40,7 +40,7 @@ def average_price_per_property(user_id, property_type=None):
     with connection.cursor() as cursor:
 
         query = """
-            SELECT property_type, AVG(predict_price)
+            SELECT property_type, AVG(predicted_price)
             FROM core_prediction
             WHERE user_id = %s
             """
