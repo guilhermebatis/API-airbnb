@@ -8,5 +8,5 @@ urlpatterns = [
          name='prediction-detail'),
     path('predictions/status', PredictionStatusView.as_view(),
          name='prediction-status'),
-    path('api/register/', RegisterView.as_view())
+    path('register/', RegisterView.as_view())
 ]
