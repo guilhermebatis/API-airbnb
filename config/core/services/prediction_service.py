@@ -2,6 +2,9 @@
 from modelo.predictor import predict_price
 from core.models import Prediction
 from django.db import connection
+from django.db import DatabaseError
+import logging
+logger = logging.getLogger(__name__)
 
 
 def generate_prediction(input_data, user):
@@ -12,7 +15,8 @@ def generate_prediction(input_data, user):
     prediction = Prediction.objects.create(
         user=user,
         host_is_superhost=input_data.get('host_is_superhost'),
-        host_total_listings_count=input_data.get('host_total_listings_count'),
+        host_total_listings_count=input_data.get(
+            'host_total_listings_count'),
         latitude=input_data.get('latitude'),
         longitude=input_data.get('longitude'),
         accommodates=input_data.get('accommodates'),
@@ -37,22 +41,27 @@ def generate_prediction(input_data, user):
 
 
 def average_price_per_property(user_id, property_type=None):
-    with connection.cursor() as cursor:
+    try:
+        with connection.cursor() as cursor:
 
-        query = """
-            SELECT property_type, AVG(predicted_price)
-            FROM core_prediction
-            WHERE user_id = %s
-            """
-        params = [user_id]
+            query = """
+                SELECT property_type, AVG(predicted_price)
+                FROM core_prediction
+                WHERE user_id = %s
+                """
+            params = [user_id]
 
-        if property_type:
-            query += " AND property_type = %s"
-            params.append(property_type)
+            if property_type:
+                query += " AND property_type = %s"
+                params.append(property_type)
 
-        query += " GROUP BY property_type"
+            query += " GROUP BY property_type"
 
-        cursor.execute(query, params)
+            cursor.execute(query, params)
 
-        result = cursor.fetchall()
-    return (result)
+            result = cursor.fetchall()
+        return result
+
+    except DatabaseError:
+        logger.error(f"Erro ao calcular média de preços: {e}")
+        return []

@@ -10,6 +10,8 @@ from drf_spectacular.utils import extend_schema, OpenApiTypes, OpenApiExample, O
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveAPIView
 from core.permissions import IsOwnerOrAdmin
+import logging
+logger = logging.getLogger(__name__)
 
 
 @extend_schema(
@@ -47,12 +49,17 @@ class PredictionPriceView(APIView):
     def post(self, request):
         serializer = PredictionSerializer(data=request.data)
 
-        if serializer.is_valid():
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
             resultado = generate_prediction(
                 serializer.validated_data, request.user)
             return Response(resultado)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f'error gerating prediction: {e}')
+            return Response({"error": 'gerating prediction'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @extend_schema(
@@ -95,10 +102,10 @@ class PredictionListView(APIView):
         property_type = request.query_params.get('property_type')
 
         if min_price:
-            predictions = predictions.filter(preco_previsto__gte=min_price)
+            predictions = predictions.filter(predicted_price__gte=min_price)
 
         if max_price:
-            predictions = predictions.filter(preco_previsto__lte=max_price)
+            predictions = predictions.filter(predicted_price__lte=max_price)
 
         if property_type:
             predictions = predictions.filter(property_type=property_type)
