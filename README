@@ -2,41 +2,41 @@
 
 API REST desenvolvida com Django Rest Framework para prever preços de imóveis com base em dados estruturados.
 
-O projeto foi construído com foco em boas práticas de backend, incluindo separação de responsabilidades, autenticação JWT, testes automatizados e alta cobertura de código.
+🔗 **API online:** https://api-airbnb-rvap.onrender.com
 
 ---
 
 ## 🧠 Visão Geral
 
-Esta API tem como objetivo fornecer previsões de preços de imóveis utilizando características como localização, número de quartos, comodidades e outras variáveis relevantes.
+Esta API permite:
 
-A arquitetura do sistema segue uma separação clara de responsabilidades:
+- Gerar previsões de preços de imóveis
+- Armazenar histórico por usuário
+- Consultar dados e estatísticas
+- Autenticar usuários via JWT
 
-- **Views:** lidam com requisições HTTP e respostas
+A arquitetura segue boas práticas de backend:
+
+- **Views:** lidam com requisições HTTP
 - **Services:** concentram a lógica de negócio
-- **Serializers:** validam e transformam dados
-
-Além disso, o sistema implementa:
-
-- Autenticação via JWT
-- Controle de acesso por usuário
-- Testes automatizados com alta cobertura (~97%)
+- **Serializers:** validação de dados
 
 ---
 
-## 🛠 Tecnologias Utilizadas
+## 🛠 Tecnologias
 
 - Python
 - Django
 - Django Rest Framework
-- SimpleJWT (autenticação)
+- JWT (SimpleJWT)
 - SQLite
-- drf-spectacular (documentação)
-- Coverage (testes automatizados)
+- Scikit-learn / XGBoost
+- drf-spectacular
+- Coverage (testes)
 
 ---
 
-## ⚙️ Como Rodar o Projeto
+## ⚙️ Rodando localmente
 
 ```bash
 git clone https://github.com/guilhermebatis/API-airbnb
@@ -52,7 +52,7 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-A API estará disponível em:
+API disponível em:
 
 ```
 http://localhost:8000/
@@ -62,13 +62,11 @@ http://localhost:8000/
 
 ## 🧪 Testes
 
-Para rodar os testes:
-
 ```bash
 python manage.py test
 ```
 
-Para verificar a cobertura de testes:
+Cobertura:
 
 ```bash
 coverage run manage.py test
@@ -77,29 +75,89 @@ coverage report
 
 ---
 
-## 🔐 Autenticação
+## 🔐 Autenticação (JWT)
 
-A API utiliza autenticação JWT.
-
-Inclua no header das requisições:
+### 1. Criar usuário
 
 ```
-Authorization: Bearer <seu_token>
+POST /api/register/
+```
+
+```json
+{
+  "username": "guilherme",
+  "password": "123456"
+}
+```
+
+---
+
+### 2. Obter token
+
+```
+POST /api/token/
+```
+
+```json
+{
+  "username": "guilherme",
+  "password": "123456"
+}
+```
+
+Resposta:
+
+```json
+{
+  "access": "TOKEN",
+  "refresh": "TOKEN"
+}
+```
+
+---
+
+### 3. Usar token
+
+Header:
+
+```
+Authorization: Bearer SEU_TOKEN
 ```
 
 ---
 
 ## 🌐 Endpoints
 
-### 🔹 Gerar previsão
+### 🔹 Criar previsão
 
 ```
 POST /api/predict/
 ```
 
+Exemplo:
+
+```json
+{
+  "latitude": -23.5,
+  "longitude": -46.6,
+  "accommodates": 2,
+  "bedrooms": 1,
+  "bathrooms": 1
+}
+```
+
+Resposta:
+
+```json
+{
+  "predicted_price": 150.0,
+  "id": 1
+}
+```
+
 ---
 
-### 🔹 Listar previsões do usuário
+### 🔹 Listar previsões
 
 ```
 GET /api/predictions/
@@ -107,15 +165,7 @@ GET /api/predictions/
 
 ---
 
-### 🔹 Detalhar previsão
-
-```
-GET /api/predictions/{id}/
-```
-
----
-
-### 🔹 Estatísticas (média por tipo)
+### 🔹 Estatísticas
 
 ```
 GET /api/predictions/status/
@@ -123,90 +173,24 @@ GET /api/predictions/status/
 
 ---
 
-## 📥 Exemplo de Request
+## 📊 Diferenciais do projeto
 
-```json
-{
-  "host_is_superhost": true,
-  "host_total_listings_count": 5,
-  "latitude": -23.5,
-  "longitude": -46.6,
-  "accommodates": 3,
-  "bathrooms": 1,
-  "bedrooms": 2,
-  "beds": 2,
-  "extra_people": 50,
-  "minimum_nights": 2,
-  "number_of_reviews": 10,
-  "instant_bookable": true,
-  "num_amenities": 15,
-  "property_type": "apartment",
-  "cancellation_policy": "flexible"
-}
-```
+- Arquitetura limpa (View / Service / Serializer)
+- Testes automatizados (~97% cobertura)
+- Deploy em produção (Render)
+- Integração com modelo de Machine Learning
+- Autenticação JWT
 
 ---
 
-## 📤 Exemplo de Response
+## 🚀 Próximos passos
 
-```json
-{
-  "predicted_price": 209.58,
-  "id": 1
-}
-```
-
----
-
-## ❌ Exemplo de Erro
-
-```json
-{
-  "error": "Erro ao gerar previsão"
-}
-```
-
----
-
-## 📚 Documentação da API (Swagger)
-
-A documentação interativa pode ser acessada em:
-
-```
-http://localhost:8000/api/docs/
-```
-
----
-
-## 📊 Cobertura de Testes
-
-O projeto possui cobertura de testes superior a:
-
-```
-~97%
-```
-
-Incluindo:
-
-- Testes de API
-- Testes de regras de negócio (services)
-- Testes de permissões
-- Testes com mock
-
----
-
-## 📌 Possíveis Melhorias Futuras
-
-- Deploy em produção (Render, Railway ou AWS)
-- Uso de banco de dados PostgreSQL
-- Containerização com Docker
-- Cache de previsões
-- Dashboard para visualização dos dados
+- Adicionar paginação
+- Cache para previsões
+- Banco PostgreSQL
 
 ---
 
 ## 👨‍💻 Autor
 
-Projeto desenvolvido como parte de estudo avançado em backend com Python.
-
----
+Guilherme Batista
